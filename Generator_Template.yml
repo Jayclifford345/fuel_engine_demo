@@ -1,0 +1,505 @@
+apiVersion: influxdata.com/v2alpha1
+kind: Label
+metadata:
+    name: blissful-khayyam-f40001
+spec:
+    color: '#31313d'
+    name: Emergency_Generator
+---
+apiVersion: influxdata.com/v2alpha1
+kind: Bucket
+metadata:
+    name: sloppy-ptolemy-f40005
+spec:
+    associations:
+      - kind: Label
+        name: blissful-khayyam-f40001
+    name: emergency_generators
+---
+apiVersion: influxdata.com/v2alpha1
+kind: Dashboard
+metadata:
+    name: unruffled-cohen-f40001
+spec:
+    associations:
+      - kind: Label
+        name: blissful-khayyam-f40001
+    charts:
+      - height: 1
+        kind: Markdown
+        name: Name this Cell
+        note: This dashboard template provides a sample usecase of projecting IoT
+            data onto the map panel. For more information follow this [guide] []
+        staticLegend: {}
+        width: 12
+      - allowPanAndZoom: true
+        geoLayers:
+          - colorDimension:
+                label: Value
+                name: color
+            colorField: _value
+            intensityDimension:
+                name: intensity
+            layerType: pointMap
+            radiusDimension:
+                name: radius
+            viewColors:
+              - hex: '#BF3D5E'
+                id: "0"
+                name: ruby
+                type: min
+              - hex: '#F48D38'
+                id: f06787ae-1016-421b-966a-231453bbad8c
+                name: tiger
+                type: threshold
+                value: 400
+              - hex: '#32B08C'
+                id: "1"
+                name: viridian
+                type: text
+                value: 600
+              - hex: '#32B08C'
+                id: "2"
+                name: viridian
+                type: max
+                value: 1000
+        height: 6
+        kind: Geo
+        latLonColumns:
+            lat:
+                column: lat
+                key: tag
+            lon:
+                column: lon
+                key: tag
+        name: Emergency Generator Locations
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "lon" or r["_field"] == "lat" or r["_field"] == "fuel")
+                  |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+                  |> rename(columns: {fuel: "_value"})
+        s2Column: s2_cell_id
+        staticLegend: {}
+        width: 7
+        yPos: 1
+        zoom: 6
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' °C'
+        colorizeRows: true
+        colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+          - hex: '#32B08C'
+            id: c4334c99-7372-4b3a-911e-0e01c7441240
+            name: viridian
+            type: text
+          - hex: '#F48D38'
+            id: c0e6dc84-4d48-4d1a-9d6f-f05f8d1ab6fd
+            name: tiger
+            type: text
+            value: 50
+          - hex: '#BF3D5E'
+            id: 09c4f88f-b42d-4661-af38-51566e381542
+            name: ruby
+            type: text
+            value: 75
+        decimalPlaces: 2
+        height: 2
+        hoverDimension: auto
+        kind: Single_Stat_Plus_Line
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: Generator 1 - Temperature
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "temperature")
+                  |> filter(fn: (r) => r["generatorID"] == "generator1")
+                  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+                  |> yield(name: "mean")
+        staticLegend:
+            colorizeRows: true
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        suffix: ' °C'
+        width: 2
+        widthRatio: 1
+        xCol: _time
+        yCol: _value
+        yPos: 7
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' °C'
+        colorizeRows: true
+        colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+          - hex: '#32B08C'
+            id: c4334c99-7372-4b3a-911e-0e01c7441240
+            name: viridian
+            type: text
+          - hex: '#F48D38'
+            id: c0e6dc84-4d48-4d1a-9d6f-f05f8d1ab6fd
+            name: tiger
+            type: text
+            value: 50
+          - hex: '#BF3D5E'
+            id: 09c4f88f-b42d-4661-af38-51566e381542
+            name: ruby
+            type: text
+            value: 75
+        decimalPlaces: 2
+        height: 2
+        hoverDimension: auto
+        kind: Single_Stat_Plus_Line
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: Generator 2 - Temperature
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "temperature")
+                  |> filter(fn: (r) => r["generatorID"] == "generator2")
+                  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+                  |> yield(name: "mean")
+        staticLegend:
+            colorizeRows: true
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        suffix: ' °C'
+        width: 2
+        widthRatio: 1
+        xCol: _time
+        xPos: 2
+        yCol: _value
+        yPos: 7
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' °C'
+        colorizeRows: true
+        colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+          - hex: '#32B08C'
+            id: c4334c99-7372-4b3a-911e-0e01c7441240
+            name: viridian
+            type: text
+          - hex: '#F48D38'
+            id: c0e6dc84-4d48-4d1a-9d6f-f05f8d1ab6fd
+            name: tiger
+            type: text
+            value: 50
+          - hex: '#BF3D5E'
+            id: 09c4f88f-b42d-4661-af38-51566e381542
+            name: ruby
+            type: text
+            value: 75
+        decimalPlaces: 2
+        height: 2
+        hoverDimension: auto
+        kind: Single_Stat_Plus_Line
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: 'Generator 3 - Temperature '
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "temperature")
+                  |> filter(fn: (r) => r["generatorID"] == "generator3")
+                  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+                  |> yield(name: "mean")
+        staticLegend:
+            colorizeRows: true
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        suffix: ' °C'
+        width: 2
+        widthRatio: 1
+        xCol: _time
+        xPos: 4
+        yCol: _value
+        yPos: 7
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' °C'
+        colorizeRows: true
+        colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+          - hex: '#32B08C'
+            id: c4334c99-7372-4b3a-911e-0e01c7441240
+            name: viridian
+            type: text
+          - hex: '#F48D38'
+            id: c0e6dc84-4d48-4d1a-9d6f-f05f8d1ab6fd
+            name: tiger
+            type: text
+            value: 50
+          - hex: '#BF3D5E'
+            id: 09c4f88f-b42d-4661-af38-51566e381542
+            name: ruby
+            type: text
+            value: 75
+        decimalPlaces: 2
+        height: 2
+        hoverDimension: auto
+        kind: Single_Stat_Plus_Line
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: Generator 4 - Temperature
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "temperature")
+                  |> filter(fn: (r) => r["generatorID"] == "generator4")
+                  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+                  |> yield(name: "mean")
+        staticLegend:
+            colorizeRows: true
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        suffix: ' °C'
+        width: 2
+        widthRatio: 1
+        xCol: _time
+        xPos: 6
+        yCol: _value
+        yPos: 7
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' Gallons'
+        colorizeRows: true
+        colors:
+          - hex: '#31C0F6'
+            id: e2954724-adb4-4967-95e4-9ad33587eb67
+            name: Nineteen Eighty Four
+            type: scale
+          - hex: '#A500A5'
+            id: 353fe124-b146-4e96-8a24-698becb5b9c1
+            name: Nineteen Eighty Four
+            type: scale
+          - hex: '#FF7E27'
+            id: 49e1f2ec-4412-4315-ad8a-250494d0a45c
+            name: Nineteen Eighty Four
+            type: scale
+        geom: step
+        height: 6
+        heightRatio: 0.34225352112676055
+        hoverDimension: auto
+        kind: Xy
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: Fuel Levels
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "fuel")
+                  |> filter(fn: (r) => r["generatorID"] == "generator1" or r["generatorID"] == "generator2" or r["generatorID"] == "generator3" or r["generatorID"] == "generator4" or r["generatorID"] == "generator5" or r["generatorID"] == "generator6")
+                  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+                  |> yield(name: "mean")
+        staticLegend:
+            colorizeRows: true
+            heightRatio: 0.34225352112676055
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        width: 5
+        widthRatio: 1
+        xCol: _time
+        xPos: 7
+        yCol: _value
+        yPos: 1
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' °C'
+        colorizeRows: true
+        colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+          - hex: '#32B08C'
+            id: c4334c99-7372-4b3a-911e-0e01c7441240
+            name: viridian
+            type: text
+          - hex: '#F48D38'
+            id: c0e6dc84-4d48-4d1a-9d6f-f05f8d1ab6fd
+            name: tiger
+            type: text
+            value: 50
+          - hex: '#BF3D5E'
+            id: 09c4f88f-b42d-4661-af38-51566e381542
+            name: ruby
+            type: text
+            value: 75
+        decimalPlaces: 2
+        height: 2
+        hoverDimension: auto
+        kind: Single_Stat_Plus_Line
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: 'Generator 5 - Temperature '
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "temperature")
+                  |> filter(fn: (r) => r["generatorID"] == "generator5")
+                  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+                  |> yield(name: "mean")
+        staticLegend:
+            colorizeRows: true
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        suffix: ' °C'
+        width: 2
+        widthRatio: 1
+        xCol: _time
+        xPos: 8
+        yCol: _value
+        yPos: 7
+      - axes:
+          - base: "10"
+            name: x
+            scale: linear
+          - base: "10"
+            name: "y"
+            scale: linear
+            suffix: ' °C'
+        colorizeRows: true
+        colors:
+          - hex: '#00C9FF'
+            id: base
+            name: laser
+            type: text
+          - hex: '#32B08C'
+            id: c4334c99-7372-4b3a-911e-0e01c7441240
+            name: viridian
+            type: text
+          - hex: '#F48D38'
+            id: c0e6dc84-4d48-4d1a-9d6f-f05f8d1ab6fd
+            name: tiger
+            type: text
+            value: 50
+          - hex: '#BF3D5E'
+            id: 09c4f88f-b42d-4661-af38-51566e381542
+            name: ruby
+            type: text
+            value: 75
+        decimalPlaces: 2
+        height: 2
+        hoverDimension: auto
+        kind: Single_Stat_Plus_Line
+        legendColorizeRows: true
+        legendOpacity: 1
+        legendOrientationThreshold: 1e+08
+        name: 'Generator 6 - Temperature '
+        opacity: 1
+        orientationThreshold: 1e+08
+        position: overlaid
+        queries:
+          - query: |-
+                from(bucket: v.bucket)
+                  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+                  |> filter(fn: (r) => r["_measurement"] == "generator_stats")
+                  |> filter(fn: (r) => r["_field"] == "temperature")
+                  |> filter(fn: (r) => r["generatorID"] == "generator6")
+                  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+                  |> yield(name: "mean")
+        staticLegend:
+            colorizeRows: true
+            opacity: 1
+            orientationThreshold: 1e+08
+            widthRatio: 1
+        suffix: ' °C'
+        width: 2
+        widthRatio: 1
+        xCol: _time
+        xPos: 10
+        yCol: _value
+        yPos: 7
+    description: This dashboard template provides a sample usecase of projecting IoT
+        data onto the map panel.
+    name: Emergency Generator Engines

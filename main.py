@@ -9,15 +9,15 @@ from faker import Faker
 
 
 
-number_of_engines = 5
-engine_id_counter = 1
+number_of_generators = 5
+generator_id_counter = 1
 fake = Faker()
 
 
 #Influx Client paramaters
-url ="https://us-east-1-1.aws.cloud2.influxdata.com/"
+url =""
 org = ""
-bucket  = "fuel_engine"
+bucket  = "emergency_generators"
 token = ""
 ih = influx_helper.influxDBHelper(url, token, org)
 
@@ -27,19 +27,19 @@ ih = influx_helper.influxDBHelper(url, token, org)
 
 class fuel_generator:
     def __init__ (self) -> None:
-        global engine_id_counter, fake
+        global generator_id_counter, fake
          
         self.coord = fake.local_latlng(country_code='US', coords_only=False)
-        self.engine_id = "engine" + str(engine_id_counter)
-        engine_id_counter+=1
+        self.generator_id = "generator" + str(generator_id_counter)
+        generator_id_counter+=1
         self.temperature = 0
         self.pressure = 0
         
         self.base_fuel = randint(900, 1000)
         self.current_fuel = None
 
-    def returnEngineID(self):
-        return self.engine_id
+    def returnGeneratorID(self):
+        return self.generator_id
 
    
     def returnTemperature(self):
@@ -67,26 +67,26 @@ class fuel_generator:
 
 
 
-def runFuelEngine():
-    fuelEngine = fuel_generator()
+def runFuelGenerator():
+    fuelgenerator = fuel_generator()
     sleeptime = randint(60, 120)
     
     while (True):
-        check_engine = {"measurement": "engine_stats", "tags": {"engineID": fuelEngine.returnEngineID()},"fields": {"lat": float (fuelEngine.coord[0]), "lon": float(fuelEngine.coord[1]),
-                                                                                                                "temperature": fuelEngine.returnTemperature(), 
-                                                                                                                "pressure": fuelEngine.returnPressure(), 
-                                                                                                                "fuel": fuelEngine.returnFuelLevel() }}
-        print(check_engine,flush=True)
+        check_generator = {"measurement": "generator_stats", "tags": {"generatorID": fuelgenerator.returnGeneratorID()},"fields": {"lat": float (fuelgenerator.coord[0]), "lon": float(fuelgenerator.coord[1]),
+                                                                                                                "temperature": fuelgenerator.returnTemperature(), 
+                                                                                                                "pressure": fuelgenerator.returnPressure(), 
+                                                                                                                "fuel": fuelgenerator.returnFuelLevel() }}
+        print(check_generator,flush=True)
         sleep(sleeptime)
-        ih.writeToInflux(bucket, check_engine)
+        ih.writeToInflux(bucket, check_generator)
 
     
 
 
 if __name__ == "__main__":
     x = 0
-    while (x <= number_of_engines):
-        engine = threading.Thread(target=runFuelEngine, daemon=True)
-        engine.start()
+    while (x <= number_of_generators):
+        generator = threading.Thread(target=runFuelGenerator, daemon=True)
+        generator.start()
         x+=1
     sleep(500000)
